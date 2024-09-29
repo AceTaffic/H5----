@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>批量请求</title>
+  </head>
+  <body>
+    <h1>批量请求多个域名</h1>
+    <button id="requestButton">开始请求</button>
+    <div id="results"></div>
+
+    <script>
+      const domains = [
+        "im.language-chat.digital",
+        "example.com", // 替换为你的域名
+        "another-domain.com", // 添加更多域名
+      ];
+
+      document.getElementById("requestButton").addEventListener("click", () => {
+        const resultsDiv = document.getElementById("results");
+        resultsDiv.innerHTML = ""; // 清空结果
+
+        const requests = domains.map((domain) => {
+          return fetch(
+            `https://tools.ipip.net/ping.php?v=4&a=send&host=${domain}&area[]=china`
+          )
+            .then((response) => response.text())
+            .then((data) => {
+              const result = document.createElement("div");
+              result.innerText = `域名: ${domain} - 返回: ${data}`;
+              resultsDiv.appendChild(result);
+            })
+            .catch((error) => {
+              const result = document.createElement("div");
+              result.innerText = `域名: ${domain} - 错误: ${error}`;
+              resultsDiv.appendChild(result);
+            });
+        });
+
+        Promise.all(requests).then(() => {
+          console.log("所有请求完成");
+        });
+      });
+    </script>
+  </body>
+</html>
